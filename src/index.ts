@@ -2,9 +2,6 @@ import mongoose from 'mongoose';
 import Bull from "bull";
 
 import { app } from './app';
-import blockchains from "./blockchains";
-import { Blockchain } from "./models/blockchain";
-import { IErc721MetadataExtrator } from "./blockchains/interface";
 import { uploadAsset } from "./events/upload-asset";
 
 const start = async () => {
