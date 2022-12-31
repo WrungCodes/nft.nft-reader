@@ -31,9 +31,24 @@ interface NftAttrs {
     ownerAddress: string,
 
     /**
+     * Name of the nft collection
+     */
+    name: string
+
+    /**
+     * Symbol of the nft collection
+     */
+    symbol: string
+
+    /**
      * Link to the asset
      */
     uri: string
+
+    /**
+     * Symbol of the nft collection
+     */
+    description: string
 
     /**
      * other options of the nft
@@ -46,18 +61,21 @@ interface NftModel extends mongoose.Model<NftDoc> {
 }
 
 export interface NftDoc extends mongoose.Document {
-    symbol: string,
+    provider: string,
     timestamp: string,
     tokenId: string,
     contractAddress: string,
     ownerAddress: string,
+    name: string,
+    symbol: string,
+    description: string,
     uri: string,
     options: any
 }
 
 const nftSchema = new mongoose.Schema(
     {
-        symbol: {
+        provider: {
             type: String,
             required: true
         },
@@ -74,6 +92,18 @@ const nftSchema = new mongoose.Schema(
             required: true,
         },
         ownerAddress: {
+            type: String,
+            required: true,
+        },
+        name: {
+            type: String,
+            required: true,
+        },
+        symbol: {
+            type: String,
+            required: true,
+        },
+        description: {
             type: String,
             required: true,
         },
