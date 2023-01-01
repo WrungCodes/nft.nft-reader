@@ -105,7 +105,7 @@ const nftSchema = new mongoose.Schema(
         },
         description: {
             type: String,
-            required: true,
+            required: false,
         },
         uri: {
             type: String,
@@ -131,6 +131,6 @@ nftSchema.statics.build = (attrs: NftAttrs) => {
     return new Nft(attrs);
 };
   
-const Nft = mongoose.model<NftDoc, NftModel>('Blockchain', nftSchema);
+const Nft = mongoose.model<NftDoc, NftModel>('Nft', nftSchema);
   
 export { Nft };

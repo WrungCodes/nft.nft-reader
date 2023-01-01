@@ -15,24 +15,9 @@ interface BlockchainAttrs {
     symbol: string,
 
     /**
-     * The time (in seconds) this blockchain uses to create a new block (for example bitcoin uses 10 minutes)
-     */
-    blocktime: number,
-
-    /**
      * variable to confirm if the blockchain is enabled or disabled
      */
     enabled: boolean,
-
-    /**
-     * number of the last block processed.
-     */
-    processedBlock: number,
-
-    /**
-     * This is to know if the blockchain can be adpated concurrenntly, i.e if multiple blocks can be processeed at a time or not
-     */
-    adaptConcurrently: number,
 
     /**
      * the options of the blockchain, this would be passed as contructor params
@@ -47,10 +32,7 @@ interface BlockchainModel extends mongoose.Model<BlockchainDoc> {
 export interface BlockchainDoc extends mongoose.Document {
     name: string,
     symbol: string,
-    blocktime: number,
     enabled: boolean,
-    processedBlock: number,
-    adaptConcurrently: number,
     options: any
 }
 
@@ -64,21 +46,9 @@ const blockchainSchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        blocktime: {
-            type: Number,
-            required: true,
-        },
         enabled: {
             type: Boolean,
             default: false
-        },
-        processedBlock: {
-            type: Number,
-            required: true,
-        },
-        adaptConcurrently: {
-            type: Number,
-            required: true,
         },
         options: {
             type: Object,
