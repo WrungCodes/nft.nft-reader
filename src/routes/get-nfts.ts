@@ -51,6 +51,20 @@ router.get(
         query.timestamp = { $gte: req.query.begin, $lte: req.query.end ?? Date.now().toString() }
     }
 
+    if(req.query.search !== undefined)
+    {
+        let regex = new RegExp( req.query.search as string, 'i');
+
+        query['$or'] = [
+            { provider: regex },
+            { tokenId: regex},
+            { contractAddress: regex},
+            { ownerAddress: regex},
+            { name: regex},
+            { symbol: regex},
+        ]
+    }  
+
     let nfts = await Nft.find(query).limit(limit * 1).skip((page - 1) * limit).exec();
 
     const count = await Nft.count(query);
