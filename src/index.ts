@@ -5,6 +5,7 @@ import { app } from './app';
 import { uploadAsset } from "./events/upload-asset";
 
 const start = async () => {
+        
     if (!process.env.REDIS) {
         throw new Error('REDIS must be defined');
     }
@@ -33,7 +34,6 @@ const start = async () => {
         // use the uri, contract address and token Id, to get the metadata of the nft
         uploadAsset(job)
     });
-    
 
     app.listen(3000, () => {
         console.log('Listening on port 3000!!!!!!!!');

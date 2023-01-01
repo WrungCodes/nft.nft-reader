@@ -14,7 +14,7 @@ export abstract class EthLike implements IErc721MetadataExtrator {
 
     async metadata(erc721: ERC721): Promise<IErc721WithMetaData> {
         try {
-            const erc721Contract = this.api.eth.Contract(abi, erc721.contractAddress);
+            const erc721Contract = new this.api.eth.Contract(abi, erc721.contractAddress);
                 
             const name = await erc721Contract.methods.name().call();
             const symbol = await erc721Contract.methods.symbol().call();
@@ -31,7 +31,7 @@ export abstract class EthLike implements IErc721MetadataExtrator {
             }
 
         } catch (error) {
-            throw new Error("Method not implemented.");   
+            throw new Error(`error occured ${error}`);   
         }
     }
 }

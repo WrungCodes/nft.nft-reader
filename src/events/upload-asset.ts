@@ -9,7 +9,7 @@ export const uploadAsset = async ( job: Bull.Job<IBlockData> ) => {
      * Find the blockchain entry of the provider blockdata passed
      */
     const bc = await Blockchain.findOne({ enabled: true, symbol: job.data.provider });
-
+    
     if(bc != null) { 
         /**
          * Check if blockchains contain the blockchain of the nft
