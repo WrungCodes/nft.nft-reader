@@ -1,13 +1,18 @@
 import mongoose from 'mongoose';
-import Bull from "bull";
-
+import amqp from "amqplib";
+import dotenv from 'dotenv'
 import { app } from './app';
-import { uploadAsset } from "./events/upload-asset";
+import { nftRecievedQueue } from "./queues/nft-recieved-queue"
 
 const start = async () => {
-        
-    if (!process.env.REDIS) {
-        throw new Error('REDIS must be defined');
+    dotenv.config()
+
+    if (!process.env.PORT) {
+        throw new Error('PORT must be defined');
+    }
+    
+    if (!process.env.RABBITMQ_URI) {
+        throw new Error('RABBITMQ_URI must be defined');
     }
 
     if (!process.env.MONGO_URI) {
@@ -21,24 +26,27 @@ const start = async () => {
         console.error(err);
     }
 
-    /**
-     * This queue acts like a message queue for other services to recieve blockdata information scanned by 
-     * this service
-     */
-    const uploadAssetQueue = new Bull( 'upload-asset', process.env.REDIS );
+    try {
+        await amqp.connect(process.env.RABBITMQ_URI);
+        console.log('Connected to RabbitMQ');
+    } catch (err) {
+        console.error(err);
+    }
 
-    /**
-     * Worker to handle new block data mainly to increased processed blocks count in the database
-     */
-    uploadAssetQueue.process((job) => {
-        // use the uri, contract address and token Id, to get the metadata of the nft
-        uploadAsset(job)
+    nftRecievedQueue()
+
+    app.listen(process.env.PORT, () => {
+        console.log('Listening on port ' + process.env.PORT);
     });
 
-    app.listen(3000, () => {
-        console.log('Listening on port 3000!!!!!!!!');
+    process.on('SIGINT', function() {
+        console.log( "\nGracefully shutting down from SIGINT (Ctrl-C)" );
+        process.exit(0);
     });
 
+    process.on('uncaughtException', function(err) {
+        console.log("\nUncaught exception!", err);
+    });
 };
 
 start();
