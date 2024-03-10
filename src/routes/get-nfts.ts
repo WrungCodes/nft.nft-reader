@@ -1,79 +1,36 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response } from "express";
+import { parseQueryMiddleware } from "../middleware/parse-query";
 import { Nft } from "../models/nft";
 
 const router = express.Router();
 
 router.get(
-  '/api/nfts/',
+  "/api/nfts/",
+  parseQueryMiddleware,
   async (req: Request, res: Response) => {
-
-    const page : number = req.query.page ? parseInt(req.query.page as string) : 1
-    const limit : number = req.query.limit ? parseInt(req.query.limit as string) : 10
-
-    // provider - blockchain
-    // timestamp "begin - end"
-    // contractAddress - contract
-    // ownerAddress - owner
-    // tokenId - token
-    // name - collection
-
-    let query : any = {}
-
-    //TODO: add these checks to thier own middleware
-
-    if(req.query.blockchain !== undefined)
-    {
-        query.provider = req.query.blockchain as string
+    // Ensure queryData exists before proceeding
+    if (!req.queryData) {
+      return res.status(400).send({ error: "Missing query data" });
     }
 
-    if(req.query.collection !== undefined)
-    {
-        query.name = req.query.collection as string
-    }
+    const { query, page, limit } = req.queryData;
 
-    if(req.query.tokenId !== undefined)
-    {
-        query.tokenId = req.query.tokenId as string
-    }  
+    try {
+      const nfts = await Nft.find(query)
+        .limit(limit)
+        .skip((page - 1) * limit)
+        .exec();
+      const count = await Nft.countDocuments(query);
 
-    if(req.query.contract !== undefined)
-    {
-        query.contractAddress = req.query.contract as string
-    }  
-
-    if(req.query.owner !== undefined)
-    {
-        query.ownerAddress = req.query.owner as string
-    }  
-
-    if(req.query.begin !== undefined)
-    {
-        query.timestamp = { $gte: req.query.begin, $lte: req.query.end ?? Date.now().toString() }
-    }
-
-    if(req.query.search !== undefined)
-    {
-        let regex = new RegExp( req.query.search as string, 'i');
-
-        query['$or'] = [
-            { provider: regex },
-            { tokenId: regex},
-            { contractAddress: regex},
-            { ownerAddress: regex},
-            { name: regex},
-            { symbol: regex},
-        ]
-    }  
-
-    let nfts = await Nft.find(query).limit(limit * 1).skip((page - 1) * limit).exec();
-
-    const count = await Nft.count(query);
-
-    res.status(200).send({
+      res.status(200).send({
         nfts,
         page,
-        totalPages: Math.max(Math.ceil(count / limit), 1)
-    });
+        totalPages: Math.max(Math.ceil(count / limit), 1),
+      });
+    } catch (error) {
+      console.error("Failed to fetch NFTs:", error);
+      res.status(500).send({ error: "Internal Server Error" });
+    }
   }
 );
 
