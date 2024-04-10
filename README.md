@@ -2,7 +2,7 @@
 
 Welcome to the Multichain NFT Indexer API! This API allows you to retrieve information about NFTs minted across multiple blockchains, including Binance Smart Chain (BSC), Ethereum (ETH), and more. It provides details such as the NFT provider, timestamp, token ID, contract address, owner address, name, symbol, description, and URI.
 
-The Data of the reader is gotten from the scanner; the repo is [here](https://github.com/WrungCodes/nft.nft-scanner)
+The Data of the reader is gotten from the scanner; the repo is [here](https://github.com/WrungCodes/nft.nft-scanner) the data is gotten through a RabbitMQ connection
 
 ## Features
 
